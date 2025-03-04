@@ -3,13 +3,10 @@ import torch.nn as nn
 import torch.optim as optim
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.io import loadmat
 from torch.optim.lr_scheduler import LambdaLR
-from torch.autograd.functional import hessian
-import torch.nn.init as init
 
 
-torch.manual_seed(1)  # 对于 CPU
+torch.manual_seed(1)
 
 B = 1.0
 m = 0.2
@@ -36,17 +33,16 @@ epsilon = 0.002
 class Potential_NN(nn.Module):
     def __init__(self, input_size, hidden_size):
         super(Potential_NN, self).__init__()
-        # 使用 Sequential 定义一个由多个线性层和激活函数组成的网络
         self.network = nn.Sequential(
-            nn.Linear(input_size, hidden_size),  # 第一层：输入到第一个隐藏层
-            nn.ReLU(),  # 激活函数
-            nn.Linear(hidden_size, hidden_size),  # 第二层：第一个隐藏层到第二个隐藏层
-            nn.ReLU(),  # 激活函数
-            nn.Linear(hidden_size, hidden_size),  # 第二层：第一个隐藏层到第二个隐藏层
-            nn.ReLU(),  # 激活函数
-            nn.Linear(hidden_size, hidden_size),  # 第二层：第一个隐藏层到第二个隐藏层
-            nn.ReLU(),  # 激活函数
-            nn.Linear(hidden_size, 1)  # 输出层
+            nn.Linear(input_size, hidden_size),
+            nn.ReLU(),
+            nn.Linear(hidden_size, hidden_size),
+            nn.ReLU(),
+            nn.Linear(hidden_size, hidden_size),
+            nn.ReLU(),
+            nn.Linear(hidden_size, hidden_size),
+            nn.ReLU(),
+            nn.Linear(hidden_size, 1)
         )
 
     def forward(self, q):
@@ -58,13 +54,12 @@ class Potential_NN(nn.Module):
 class Kinetic_Matrix_NN(nn.Module):
     def __init__(self, input_size, hidden_size):
         super(Kinetic_Matrix_NN, self).__init__()
-        # 使用 Sequential 定义一个由多个线性层和激活函数组成的网络
         self.network = nn.Sequential(
-            nn.Linear(input_size, hidden_size),  # 第一层：输入到第一个隐藏层
-            nn.Softplus(),  # 激活函数
-            nn.Linear(hidden_size, hidden_size),  # 第二层：第一个隐藏层到第二个隐藏层
-            nn.Softplus(),  # 激活函数
-            nn.Linear(hidden_size, 2),  # 输出层
+            nn.Linear(input_size, hidden_size),
+            nn.Softplus(),
+            nn.Linear(hidden_size, hidden_size),
+            nn.Softplus(),
+            nn.Linear(hidden_size, 2),
             nn.Softplus(),
         )
         # self.m = nn.Parameter(torch.tensor(5.0))
@@ -84,13 +79,12 @@ class Kinetic_Matrix_NN(nn.Module):
 class Damping_Matrix_NN(nn.Module):
     def __init__(self, input_size, hidden_size):
         super(Damping_Matrix_NN, self).__init__()
-        # 使用 Sequential 定义一个由多个线性层和激活函数组成的网络
         self.network = nn.Sequential(
-            nn.Linear(input_size, hidden_size),  # 第一层：输入到第一个隐藏层
-            nn.Softplus(),  # 激活函数
-            nn.Linear(hidden_size, hidden_size),  # 第二层：第一个隐藏层到第二个隐藏层
-            nn.Softplus(),  # 激活函数
-            nn.Linear(hidden_size, 2),  # 输出层
+            nn.Linear(input_size, hidden_size),
+            nn.Softplus(),
+            nn.Linear(hidden_size, hidden_size),
+            nn.Softplus(),
+            nn.Linear(hidden_size, 2),
             nn.Softplus(),
         )
 
@@ -222,9 +216,8 @@ for i in range(Epoch):
         print('epoch: {} loss: {:.5f} y_now: {}'.format(i, loss.item(), y_now))  # loss为(1,)的tensor
 
     optimizer.zero_grad()
-    loss.backward()  # 会自动计算所有参数的导数（包括W1、W2、X）
+    loss.backward()
 
-    # 执行梯度剪裁
     torch.nn.utils.clip_grad_norm_(list(Potential_model.parameters()) +
                        list(Kinetic_matrix_model.parameters()) + list(Damping_matrix_model.parameters()), max_norm=1.0)
 
@@ -242,7 +235,7 @@ qpre = np.load("Simulation_DeLaN_Full_States_Prediction.npy")
 print('Train_Y', RMSE_VAF(data[0:y_now, 1], qpre[:y_now,0]))
 print('Train_C', RMSE_VAF(data[0:y_now, 2], qpre[:y_now,1]))
 
-plt.figure(num=1,figsize=(16,10)) # 再来一张新图片
+plt.figure(num=1, figsize=(16,10))
 plt.plot(np.arange(1, len(Fs_signal)+1),y_output,label='real y')
 plt.plot(np.arange(1, len(Fs_signal)+1),c_output,label='real c')
 plt.plot(np.arange(1, len(Fs_signal)+1),qpre[:y_now,0],label='predicted y')
@@ -253,7 +246,7 @@ plt.title('train')
 print('TEST_Y', RMSE_VAF(data[y_now:, 1], qpre[y_now:,0]))
 print('TEST_C', RMSE_VAF(data[y_now:, 2], qpre[y_now:,1]))
 
-plt.figure(num=2,figsize=(16,10)) # 再来一张新图片
+plt.figure(num=2, figsize=(16,10))
 plt.plot(np.arange(len(Fs_signal)+1, 1001),data[y_now:,1],label='real y')
 plt.plot(np.arange(len(Fs_signal)+1, 1001),data[y_now:,2],label='real c')
 plt.plot(np.arange(len(Fs_signal)+1, 1001),qpre[y_now:,0],label='predicted y')

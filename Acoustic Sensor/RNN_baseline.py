@@ -134,7 +134,7 @@ y_pre = model(torch.tensor(data[:, 0])).detach().numpy()
 print('Train_Y', RMSE_VAF(data[0:y_now, 1], y_pre[:y_now,0]))
 print('Train_C', RMSE_VAF(data[0:y_now, 2], y_pre[:y_now,1]))
 
-plt.figure(num=1, figsize=(16, 10)) # 再来一张新图片
+plt.figure(num=1, figsize=(16, 10))
 plt.plot(np.arange(1, len(Fs_signal)+1),y_output,label='real y')
 plt.plot(np.arange(1, len(Fs_signal)+1),c_output,label='real c')
 plt.plot(np.arange(1, len(Fs_signal)+1),y_pre[:y_now,0],label='predicted y')
@@ -145,7 +145,7 @@ plt.title('train')
 print('TEST_Y', RMSE_VAF(data[y_now:, 1], y_pre[y_now:,0]))
 print('TEST_C', RMSE_VAF(data[y_now:, 2], y_pre[y_now:,1]))
 
-plt.figure(num=2, figsize=(16, 10)) # 再来一张新图片
+plt.figure(num=2, figsize=(16, 10))
 plt.plot(np.arange(len(Fs_signal)+1, 1001),data[y_now:,1],label='real y')
 plt.plot(np.arange(len(Fs_signal)+1, 1001),data[y_now:,2],label='real c')
 plt.plot(np.arange(len(Fs_signal)+1, 1001),y_pre[y_now:,0],label='predicted y')
