@@ -8,6 +8,9 @@
 
 ### Acoustic Sensor
 
+-  ```data```
+The sampled data of the Acoustic Sensor system.
+
 -  ```RKR-PINN.py```
 The implemetation of Runge-Kutta Recurrent Physics-Informed Neural Network.
 
